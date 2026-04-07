@@ -3,223 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пасхальный Квиз | Pro Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <title>Пасхальный Квиз | Laptop Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pink: #FF85D0;
-            --lime: #C1FF72;
-            --blue: #72FFFF;
-            --orange: #FFBD72;
-            --bg: #F0F2F5;
-            --black: #000000;
+            --pink: #FF85D0; --lime: #C1FF72; --blue: #72FFFF; --orange: #FFBD72; --black: #000;
         }
-
         * { box-sizing: border-box; }
-
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--black);
-            padding: 20px;
+            background-color: #F0F2F5;
+            margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden; /* Запрет прокрутки всего окна */
         }
-
-        /* Декоративные стикеры */
-        .bg-decor { position: absolute; font-size: 80px; z-index: -1; opacity: 0.2; user-select: none; }
-
         #quiz-container {
-            width: 100%;
-            max-width: 1350px; /* Увеличили ширину под большой формат */
-            background: white;
-            border: 6px solid var(--black);
-            border-radius: 50px;
-            display: flex; 
-            overflow: hidden;
-            box-shadow: 25px 25px 0px var(--black);
+            width: 95%; max-width: 1200px; height: 85vh; /* Фиксированная высота квиза */
+            background: white; border: 5px solid var(--black); border-radius: 40px;
+            display: flex; overflow: hidden; box-shadow: 15px 15px 0px var(--black);
             position: relative;
         }
-
-        /* ЛЕВАЯ ПАНЕЛЬ С КАРТИНКОЙ */
         .visual-panel {
-            flex: 1.4; /* Картинка теперь занимает больше места */
-            background: #f9f9f9;
-            border-right: 6px solid var(--black);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
+            flex: 1.1; background: #fdfdfd; border-right: 5px solid var(--black);
+            display: flex; align-items: center; justify-content: center; padding: 20px;
         }
-
-        /* РАМКА ПОД ФОРМАТ 2760х1504 */
         .image-box {
-            width: 100%;
-            aspect-ratio: 2760 / 1504; /* ТОЧНЫЕ ПРОПОРЦИИ ТВОЕЙ КАРТИНКИ */
-            border: 6px solid var(--black);
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 12px 12px 0px var(--black);
-            background: #eee;
+            width: 100%; aspect-ratio: 2760 / 1504;
+            border: 4px solid var(--black); border-radius: 20px;
+            overflow: hidden; box-shadow: 8px 8px 0px var(--black);
         }
+        .image-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .image-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Картинка заполнит рамку без искажений */
-        }
-
-        /* ПРАВАЯ ПАНЕЛЬ С КОНТЕНТОМ */
         .content-panel {
-            flex: 1;
-            padding: 60px 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: space-between;
         }
-
         .q-badge {
-            align-self: flex-start;
-            background: var(--lime);
-            padding: 10px 25px;
-            border: 4px solid var(--black);
-            border-radius: 20px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            transform: rotate(-1deg);
+            display: inline-block; background: var(--pink); padding: 5px 15px;
+            border: 3px solid var(--black); border-radius: 12px; font-weight: 900;
+            font-size: 0.9rem; transform: rotate(-1deg); align-self: flex-start;
         }
+        h2 { font-size: 1.4rem; margin: 15px 0; line-height: 1.2; font-weight: 900; }
 
-        h2 {
-            font-size: 2.2rem;
-            margin: 0 0 35px 0;
-            line-height: 1.2;
-            font-weight: 900;
-        }
-
+        /* СЕТКА 2х2 ДЛЯ ЭКОНОМИИ МЕСТА */
         .options-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* В один ряд для лучшей читаемости длинных текстов */
-            gap: 15px;
+            display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+            gap: 12px; flex-grow: 1; margin-bottom: 15px;
         }
-
         .btn-opt {
-            background: white;
-            border: 4px solid var(--black);
-            border-radius: 22px;
-            padding: 22px 30px;
-            font-size: 1.3rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.2s;
-            font-family: inherit;
-            text-align: left;
+            background: white; border: 3px solid var(--black); border-radius: 15px;
+            padding: 10px 15px; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; transition: 0.2s; font-family: inherit;
+            display: flex; align-items: center; justify-content: center; text-align: center;
         }
-
-        .btn-opt:hover {
-            transform: translate(-5px, -5px);
-            box-shadow: 7px 7px 0px var(--black);
-            background-color: var(--blue);
-        }
-
+        .btn-opt:hover { transform: translate(-3px, -3px); box-shadow: 4px 4px 0px var(--black); background: var(--blue); }
         .correct { background: var(--lime) !important; }
         .wrong { background: #FF6B6B !important; color: white; }
 
-        .progress-container {
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 100%; height: 20px;
-            background: #eee;
-            border-top: 6px solid var(--black);
-        }
-
-        .progress-fill { height: 100%; background: var(--pink); width: 0%; transition: 0.6s; }
-
+        .nav-zone { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
         #next-btn {
-            background: var(--black);
-            color: white;
-            border: none;
-            padding: 20px 60px;
-            border-radius: 50px;
-            font-size: 1.3rem;
-            font-weight: 900;
-            cursor: pointer;
-            margin-top: 30px;
-            display: none;
-            align-self: center;
+            background: var(--black); color: white; border: none; padding: 12px 30px;
+            border-radius: 30px; font-weight: 900; cursor: pointer; visibility: hidden;
         }
+        .progress-bar { flex-grow: 1; height: 12px; background: #EEE; border: 2px solid var(--black); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--orange); width: 0%; transition: 0.4s; }
 
-        #final-screen { width: 100%; text-align: center; display: none; padding: 100px; }
-
-        /* Адаптация под меньшие экраны */
-        @media (max-width: 1100px) {
-            #quiz-container { flex-direction: column; max-width: 700px; }
-            .visual-panel { border-right: none; border-bottom: 6px solid var(--black); }
-            h2 { font-size: 1.7rem; }
-        }
+        #final-screen { width: 100%; text-align: center; display: none; padding: 50px; }
     </style>
 </head>
 <body>
 
-    <div class="bg-decor" style="top: 5%; left: 5%;">🥚</div>
-    <div class="bg-decor" style="bottom: 5%; right: 5%;">🕊️</div>
-
     <div id="quiz-container">
         <div id="quiz-ui" style="display: contents;">
             <div class="visual-panel">
-                <div class="image-box">
-                    <img id="q-image" src="1.jpg">
-                </div>
+                <div class="image-box"><img id="q-image" src="1.jpg"></div>
             </div>
-
             <div class="content-panel">
-                <div class="q-badge" id="q-count">ВОПРОС 1/20</div>
-                <h2 id="q-text">Загрузка...</h2>
+                <div>
+                    <div class="q-badge" id="q-count">ВОПРОС 1/20</div>
+                    <h2 id="q-text">Загрузка...</h2>
+                </div>
+                
                 <div class="options-grid" id="options"></div>
-                <button id="next-btn" onclick="nextStep()">ДАЛЕЕ ➔</button>
-            </div>
 
-            <div class="progress-container">
-                <div class="progress-fill" id="pb"></div>
+                <div class="nav-zone">
+                    <div class="progress-bar"><div class="progress-fill" id="pb"></div></div>
+                    <button id="next-btn" onclick="nextStep()">ДАЛЕЕ ➔</button>
+                </div>
             </div>
         </div>
 
         <div id="final-screen">
-            <h1 style="font-size: 5rem;">🏆</h1>
-            <h2 style="font-size: 3rem;">КВИЗ ПРОЙДЕН!</h2>
-            <p id="total" style="font-size: 2.2rem; font-weight: 900;"></p>
-            <button class="btn-opt" style="margin: 0 auto; width: 350px; background: var(--orange); text-align:center;" onclick="location.reload()">ИГРАТЬ СНОВА</button>
+            <h1 style="font-size: 4rem; margin: 0;">🐣</h1>
+            <h2 style="font-size: 2.5rem;">КВИЗ ЗАВЕРШЕН!</h2>
+            <p id="total" style="font-size: 2rem; font-weight: 900; margin-bottom: 20px;"></p>
+            <button class="btn-opt" style="margin: 0 auto; width: 300px; background: var(--lime);" onclick="location.reload()">ИГРАТЬ СНОВА</button>
         </div>
     </div>
 
 <script>
-    // Проверь, чтобы формат был именно jpg (или поменяй на png ниже)
-    const format = 'jpg'; 
+    const format = 'jpg'; // Поменяй на 'png', если нужно
 
     const questions = [
-        { q: "Что обнаружили женщины у гробницы Иисуса в пасхальное утро?", a: ["Охрану, которая проспала смену", "Отваленный камень и ангела", "Забытую плащаницу с надписью «Скоро вернусь»", "Пустую упаковку от пасхального яйца"], c: 1 },
-        { q: "Кто первым из апостолов зашёл в пустой гроб?", a: ["Пётр (пропустил Иоанна вперёд)", "Иоанн", "Фома, который попросил фото", "Иуда — ему было не до визитов"], c: 0 },
-        { q: "Какой приветственной фразой обычно начинается пасхальное богослужение?", a: ["«Христос воскресе!»", "«С праздником, коллеги!»", "«Христос воскрес!» — «Воистину воскрес!»", "«Господь жив — и мы с Ним!»"], c: 2 },
-        { q: "Почему на Пасху принято красить яйца?", a: ["Чтобы куры не грустили", "По легенде, яйцо покраснело у императора", "Белые яйца хуже ловятся", "Для ремонта дорог"], c: 1 },
-        { q: "Сколько дней Иисус пробыл во гробе?", a: ["Три дня и три ночи", "До первой зарплаты", "Ровно 72 часа", "Два с половиной"], c: 0 },
-        { q: "Какой символ не связан напрямую с христианством?", a: ["Агнец", "Пасхальный кролик", "Свеча", "Кулич"], c: 1 },
-        { q: "Что сделали первосвященники после известия?", a: ["Обрадовались", "Подкупили стражников", "Объявили конкурс", "Ушли отдыхать"], c: 1 },
-        { q: "Что символизирует Гроб Господень?", a: ["Кулич", "Творожная пасха", "Яйцо", "Шоколадный заяц"], c: 1 },
-        { q: "Кто усомнился в воскресении?", a: ["Пётр", "Фома", "Андрей", "Матфей"], c: 1 },
-        { q: "Ответ на «Христос воскрес!»?", a: ["Спасибо", "Воистину воскрес!", "Привет", "На здоровье"], c: 1 },
-        { q: "Как называется неделя перед Пасхой?", a: ["Фан-уикенд", "Страстная седмица", "Генеральная уборка", "Марафон"], c: 1 },
-        { q: "Самая сложная «находка» (шуточно)?", a: ["Ковчег", "Колесница", "Пещера", "Яйцо под диваном"], c: 3 },
-        { q: "Сколько раз Иисус являлся после воскресения?", a: ["3", "5", "Не менее 10", "У холодильника"], c: 2 },
-        { q: "Символ крови Христа?", a: ["Сок", "Вино", "Квас", "Энергетик"], c: 1 },
-        { q: "Почему прячут яйца?", a: ["Чтобы не съели", "Традиция с кроликом", "Нет места", "Ради ежей"], c: 1 },
-        { q: "Кто первым увидел Иисуса?", a: ["Мария Иаковлева", "Мария Магдалина", "Саломея", "Жена Пилата"], c: 1 },
-        { q: "Что делают с яйцами?", a: ["Бьют", "Кидают", "Давят", "Переваривают"], c: 0 },
-        { q: "Мем с котиком?", a: ["ХВ", "Христос котится!", "Воистину мяу", "Яйцезаяц"], c: 1 },
-        { q: "Что в центре служения?", a: ["Письмо", "Пустой гроб", "Копилка", "ТВ"], c: 1 },
-        { q: "Почему кролик разносит яйца?", a: ["Я в логистике", "Это шоколад", "Поставщики", "Секрет"], c: 0 }
+        { q: "Что, согласно Евангелиям, обнаружили женщины у гробницы Иисуса в пасхальное утро?", a: ["А) Охрану, которая проспала смену", "Б) Отваленный камень и ангела", "В) Забытую плащаницу с надписью «Скоро вернусь»", "Г) Пустую упаковку от пасхального яйца"], c: 1 },
+        { q: "Кто первым из апостолов зашёл в пустой гроб?", a: ["А) Пётр (наперегонки с Иоанном, но пропустил его вперёд)", "Б) Иоанн", "В) Фома, который попросил сначала прислать фото", "Г) Иуда — но ему было уже не до визитов"], c: 0 },
+        { q: "Какой приветственной фразой обычно начинается пасхальное богослужение?", a: ["А) «Христос воскресе!»", "Б) «С праздником, коллеги!»", "В) «Христос воскрес!» — «Воистину воскрес!»", "Г) «Господь жив — и мы с Ним!»"], c: 2 },
+        { q: "Почему на Пасху принято красить яйца?", a: ["А) Чтобы куры не грустили", "Б) По легенде, Мария Магдалина принесла императору яйцо, которое покраснело", "В) Потому что белые яйца хуже ловятся", "Г) Для ремонта дорожных неровностей"], c: 1 },
+        { q: "Сколько дней Иисус пробыл во гробе?", a: ["А) Три дня и три ночи", "Б) До первой зарплаты", "В) Ровно 72 часа", "Г) Два с половиной"], c: 0 },
+        { q: "Какой символ не связан напрямую с христианством?", a: ["А) Агнец", "Б) Пасхальный кролик", "В) Свеча", "Г) Кулич"], c: 1 },
+        { q: "Что сделали первосвященники после известия о воскресении?", a: ["А) Обрадовались", "Б) Подкупили стражников", "В) Объявили конкурс", "Г) Ушли отдыхать"], c: 1 },
+        { q: "Что символизирует Гроб Господень?", a: ["А) Кулич", "Б) Творожная пасха", "В) Яйцо", "Г) Шоколадный заяц"], c: 1 },
+        { q: "Кто усомнился в воскресении?", a: ["А) Пётр", "Б) Фома", "В) Андрей", "Г) Матфей"], c: 1 },
+        { q: "Ответ на «Христос воскрес!»?", a: ["А) Спасибо", "Б) Воистину воскрес!", "В) И тебе не хворать", "Г) На здоровье"], c: 1 },
+        { q: "Как называется неделя перед Пасхой?", a: ["А) Фан-уикенд", "Б) Страстная седмица", "В) Генеральная уборка", "Г) Марафон"], c: 1 },
+        { q: "Самая сложная «находка» (шуточно)?", a: ["А) Ковчег", "Б) Колесница", "В) Пещера", "Г) Яйцо под диваном"], c: 3 },
+        { q: "Сколько раз Иисус являлся после воскресения?", a: ["А) 3", "Б) 5", "В) Не менее 10", "Г) Каждый раз у холодильника"], c: 2 },
+        { q: "Символ крови Христа?", a: ["А) Сок", "Б) Вино", "В) Квас", "Г) Энергетик"], c: 1 },
+        { q: "Почему прячут яйца?", a: ["А) Чтобы не съели", "Б) Традиция с кроликом", "В) Нет места", "Г) Ради ежей"], c: 1 },
+        { q: "Кто первым увидел Иисуса?", a: ["А) Мария, мать Иакова", "Б) Мария Магдалина", "В) Саломея", "Г) Жена Пилата"], c: 1 },
+        { q: "Что делают с яйцами?", a: ["А) Бьют", "Б) Кидают", "В) Давят", "Г) Переваривают"], c: 0 },
+        { q: "Мем с котиком?", a: ["А) ХВ", "Б) Христос котится!", "В) Воистину мяу", "Г) Яйцезаяц"], c: 1 },
+        { q: "Что в центре служения?", a: ["А) Письмо", "Б) Пустой гроб", "В) Копилка", "Г) ТВ"], c: 1 },
+        { q: "Почему кролик разносит яйца?", a: ["А) Я в логистике", "Б) Это шоколад", "В) Есть поставщики", "Г) Секрет"], c: 0 }
     ];
 
     let current = 0, score = 0, locked = false;
@@ -230,7 +134,7 @@
         document.getElementById('q-count').innerText = `ВОПРОС ${current + 1}/20`;
         document.getElementById('q-text').innerText = d.q;
         document.getElementById('q-image').src = (current + 1) + '.' + format;
-        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('next-btn').style.visibility = 'hidden';
         
         const container = document.getElementById('options');
         container.innerHTML = '';
@@ -244,7 +148,7 @@
                 locked = true;
                 if (i === d.c) { b.classList.add('correct'); score++; }
                 else { b.classList.add('wrong'); container.children[d.c].classList.add('correct'); }
-                document.getElementById('next-btn').style.display = 'block';
+                document.getElementById('next-btn').style.visibility = 'visible';
             };
             container.appendChild(b);
         });
@@ -257,10 +161,9 @@
         else {
             document.getElementById('quiz-ui').style.display = 'none';
             document.getElementById('final-screen').style.display = 'block';
-            document.getElementById('total').innerText = `Результат: ${score} из 20`;
+            document.getElementById('total').innerText = `Счёт: ${score} из 20`;
         }
     }
-
     init();
 </script>
 </body>
