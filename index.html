@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пасхальный Квиз | BIG FONT Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #FF85D0;
+            --lime: #C1FF72;
+            --blue: #72FFFF;
+            --orange: #FFBD72;
+            --bg: #F8F8F8;
+            --black: #000000;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--black);
+            overflow-x: hidden;
+        }
+
+        #quiz-container {
+            width: 95%;
+            max-width: 700px; /* Немного расширил для крупных кнопок */
+            background: white;
+            border: 5px solid var(--black);
+            border-radius: 50px;
+            padding: 40px;
+            box-shadow: 20px 20px 0px var(--black);
+            position: relative;
+        }
+
+        .image-frame {
+            width: 100%;
+            height: 350px;
+            border: 5px solid var(--black);
+            border-radius: 35px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            background-color: #eee;
+        }
+
+        .image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .q-label {
+            display: inline-block;
+            background: var(--lime);
+            padding: 8px 20px;
+            border: 4px solid var(--black);
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            transform: rotate(-1.5deg);
+        }
+
+        h2 {
+            font-size: 1.8rem; /* Крупный заголовок вопроса */
+            margin: 0 0 30px 0;
+            line-height: 1.2;
+            font-weight: 900;
+        }
+
+        /* СЕТКА ВАРИАНТОВ ОТВЕТА */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* В одну колонку для максимальной крупности */
+            gap: 15px;
+        }
+
+        .btn-opt {
+            background: white;
+            border: 4px solid var(--black);
+            border-radius: 25px;
+            padding: 22px 30px; /* Много места внутри */
+            font-size: 1.4rem;  /* ТОТ САМЫЙ КРУПНЫЙ ШРИФТ */
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: inherit;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-opt:hover {
+            transform: translate(-5px, -5px);
+            box-shadow: 7px 7px 0px var(--black);
+            background-color: var(--blue);
+        }
+
+        .correct { background: var(--lime) !important; transform: scale(1.02); }
+        .wrong { background: #FF6B6B !important; color: white; }
+
+        #next-btn {
+            background: var(--black);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: none;
+            margin: 30px auto 0;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+
+        .progress-box {
+            width: 100%;
+            height: 15px;
+            background: #E0E0E0;
+            border-radius: 20px;
+            border: 4px solid var(--black);
+            margin-top: 40px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--pink);
+            width: 0%;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #final-screen { text-align: center; display: none; }
+        #final-screen h1 { font-size: 5rem; margin: 0; }
+
+        /* Для мобильных устройств */
+        @media (max-width: 600px) {
+            h2 { font-size: 1.4rem; }
+            .btn-opt { font-size: 1.1rem; padding: 18px; }
+            .image-frame { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="quiz-container">
+        <div id="quiz-ui">
+            <div class="q-label" id="q-count">ВОПРОС 1/20</div>
+            
+            <div class="image-frame">
+                <img id="q-image" src="1.jpg" alt="Пасха">
+            </div>
+
+            <h2 id="q-text">Загрузка...</h2>
+
+            <div class="options-grid" id="options"></div>
+
+            <center><button id="next-btn" onclick="nextStep()">ДАЛЕЕ ➔</button></center>
+
+            <div class="progress-box">
+                <div class="progress-fill" id="pb"></div>
+            </div>
+        </div>
+
+        <div id="final-screen">
+            <h1>🏆</h1>
+            <h2 style="font-size: 2.5rem;">КВИЗ ОКОНЧЕН!</h2>
+            <p id="total" style="font-size: 2rem; font-weight: 900; margin-bottom: 30px;"></p>
+            <button class="btn-opt" style="width:100%; background: var(--orange); justify-content: center;" onclick="location.reload()">ПОПРОБОВАТЬ СНОВА</button>
+        </div>
+    </div>
+
+<script>
+    const questions = [
+        { q: "Что обнаружили женщины у гробницы Иисуса в пасхальное утро?", a: ["Охрану, которая проспала смену", "Отваленный камень и ангела", "Забытую плащаницу с надписью «Скоро вернусь»", "Пустую упаковку от пасхального яйца"], c: 1, img: "1.jpg" },
+        { q: "Кто первым из апостолов зашёл в пустой гроб?", a: ["Пётр", "Иоанн", "Фома, который попросил сначала фото", "Иуда — ему было уже не до визитов"], c: 0, img: "2.jpg" },
+        { q: "Какой фразой обычно начинается пасхальное богослужение?", a: ["«Христос воскресе!»", "«С праздником, коллеги!»", "«Христос воскрес!» — «Воистину воскрес!»", "«Господь жив — и мы с Ним!»"], c: 2, img: "3.jpg" },
+        { q: "Почему на Пасху принято красить яйца?", a: ["Чтобы куры не грустили", "Легенда о Марии Магдалине и императоре", "Потому что белые яйца хуже ловятся", "Для ремонта дорожных неровностей"], c: 1, img: "4.jpg" },
+        { q: "Сколько дней Иисус пробыл во гробе?", a: ["Три дня и три ночи", "До первой зарплаты", "Ровно 72 часа", "Два с половиной"], c: 0, img: "5.jpg" },
+        { q: "Какой символ не связан напрямую с христианством?", a: ["Агнец", "Пасхальный кролик", "Свеча", "Кулич"], c: 1, img: "6.jpg" },
+        { q: "Что сделали первосвященники после известия о воскресении?", a: ["Обрадовались", "Подкупили стражников", "Объявили конкурс", "Ушли отдыхать"], c: 1, img: "7.jpg" },
+        { q: "Что символизирует Гроб Господень?", a: ["Кулич", "Творожная пасха", "Яйцо", "Шоколадный заяц"], c: 1, img: "8.jpg" },
+        { q: "Кто усомнился в воскресении?", a: ["Пётр", "Фома", "Андрей", "Матфей"], c: 1, img: "9.jpg" },
+        { q: "Ответ на «Христос воскрес!»?", a: ["Спасибо", "Воистину воскрес!", "И тебе не хворать", "На здоровье"], c: 1, img: "10.jpg" },
+        { q: "Как называется неделя перед Пасхой?", a: ["Фан-уикенд", "Страстная седмица", "Генеральная уборка", "Марафон"], c: 1, img: "11.jpg" },
+        { q: "Самая сложная «находка» (шуточно)?", a: ["Ковчег", "Колесница", "Пещера", "Яйцо под диваном"], c: 3, img: "12.jpg" },
+        { q: "Сколько раз Иисус являлся после воскресения?", a: ["3", "5", "Не менее 10", "Каждый раз у холодильника"], c: 2, img: "13.jpg" },
+        { q: "Символ крови Христа?", a: ["Сок", "Вино", "Квас", "Энергетик"], c: 1, img: "14.jpg" },
+        { q: "Почему прячут яйца?", a: ["Чтобы не съели", "Традиция с кроликом", "Нет места", "Ради ежей"], c: 1, img: "15.jpg" },
+        { q: "Кто первым увидел Иисуса?", a: ["Мария, мать Иакова", "Мария Магдалина", "Саломея", "Жена Пилата"], c: 1, img: "16.jpg" },
+        { q: "Что делают с яйцами?", a: ["Бьют", "Кидают", "Давят", "Переваривают"], c: 0, img: "17.jpg" },
+        { q: "Мем с котиком?", a: ["ХВ", "Христос котится!", "Воистину мяу", "Яйцезаяц"], c: 1, img: "18.jpg" },
+        { q: "Что в центре служения?", a: ["Письмо", "Пустой гроб", "Копилка", "ТВ"], c: 1, img: "19.jpg" },
+        { q: "Почему кролик разносит яйца?", a: ["Я в логистике", "Это шоколад", "Есть поставщики", "Секрет"], c: 0, img: "20.jpg" }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let locked = false;
+
+    function init() {
+        locked = false;
+        const data = questions[current];
+        document.getElementById('q-count').innerText = `ВОПРОС ${current + 1}/20`;
+        document.getElementById('q-text').innerText = data.q;
+        document.getElementById('q-image').src = data.img;
+        document.getElementById('next-btn').style.display = 'none';
+        
+        const container = document.getElementById('options');
+        container.innerHTML = '';
+        
+        data.a.forEach((txt, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn-opt';
+            b.innerHTML = `<span>${txt}</span>`;
+            b.onclick = () => check(i, b);
+            container.appendChild(b);
+        });
+
+        document.getElementById('pb').style.width = ((current + 1) / 20) * 100 + '%';
+    }
+
+    function check(idx, btn) {
+        if (locked) return;
+        locked = true;
+        const correctIdx = questions[current].c;
+        if (idx === correctIdx) {
+            btn.classList.add('correct');
+            score++;
+        } else {
+            btn.classList.add('wrong');
+            document.querySelectorAll('.btn-opt')[correctIdx].classList.add('correct');
+        }
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextStep() {
+        current++;
+        if (current < questions.length) {
+            init();
+            window.scrollTo(0, 0);
+        } else {
+            document.getElementById('quiz-ui').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'block';
+            document.getElementById('total').innerText = `Твой счёт: ${score} из 20`;
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
